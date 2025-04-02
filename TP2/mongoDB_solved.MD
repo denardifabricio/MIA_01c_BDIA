@@ -210,7 +210,7 @@ db.facturas.aggregate([
   },
   { $sort: { cantidad_diferentes_personas: -1 } }
 ]);
-```js
+```
 ![alt text](img/query_11.png)
 
 ### 12. Obtener el total gastado por persona y mostrar solo los que gastaron más de 3100000. Los documentos devueltos deben tener el nombre completo del cliente y el total gastado: {cliente:”<nombreCompleto>”,total:<num>}
