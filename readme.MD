@@ -17,3 +17,7 @@ En este repo podrán ver la resolución a los diferentes trabajos prácticos de 
 ## Trabajo Práctico Nº 1
 Referido a SQL.
 [Ver resolución](TP1/chinook_solved.MD)
+
+## Trabajo Práctico Nº 2
+Referido NoSQL. Mongo DB.
+[Ver resolución](TP1/mongoDB_solved.MD)

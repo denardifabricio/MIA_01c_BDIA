@@ -2,7 +2,7 @@
 
 # Trabajo Práctico Nº 1
 Referido a SQL.
-s
+
 # Base de datos 
 Los ejercicios se hicieron a partir de la siguiente base de datos de ejemplo: \
 Chinook Database - Version 1.4  \
