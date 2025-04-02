@@ -289,6 +289,31 @@ db.facturas.aggregate([
 ![alt text](img/query_15.png)
 
 ### 16. Utilizando MapReduce, indicar la cantidad total comprada de cada ítem. Comparar el resultado con el ejercicio 8.
+```
+// Map function
+var mapFunction = function() {
+  this.item.forEach(function(product) {
+    emit(product.producto, product.cantidad);
+  });
+};
+
+// Reduce function
+var reduceFunction = function(key, values) {
+  return Array.sum(values);
+};
+
+// Execute MapReduce
+db.facturas.mapReduce(
+  mapFunction,
+  reduceFunction,
+  {
+    out: { inline: 1 }
+  }
+);
+```
+![alt text](img/query_16.png)
+
+Como se puede observar, desde la consola de MongoDB Compass no puedo obtener el resultado, por lo tanto no puedo comparar.
 
 ### 17. Obtener la información de los clientes que hayan gastado 100000 en una orden junto con el número de orden.
 Para que me devuelva valores tuve que ajustar el valor del filtro. En este caso puse 268.
