@@ -20,4 +20,4 @@ Referido a SQL.
 
 ## Trabajo Práctico Nº 2
 Referido NoSQL. Mongo DB.
-[Ver resolución](TP1/mongoDB_solved.MD)
+[Ver resolución](TP2/mongoDB_solved.MD)
