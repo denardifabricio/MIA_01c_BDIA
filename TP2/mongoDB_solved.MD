@@ -11,7 +11,7 @@ A continuación se mostrará la resolución para cada consulta solicitada.
 
 
 ### 1. Realizar una consulta que devuelva la siguiente información: Región y cantidad total de productos vendidos a clientes de esa Región.
-```
+```js
 db.facturas.aggregate([
   { $unwind: "$item" },
   { $group: { _id: "$cliente.region", total_productos_vendidos: { $sum: "$item.cantidad" } } },
@@ -21,10 +21,9 @@ db.facturas.aggregate([
 ![alt text](img/query_01.png)
 
 ### 2. Basado en la consulta del punto 1, mostrar sólo la región que tenga el menor ingreso.
-
 Como menor ingreso interpreté que es el pxq. Es decir no los productos vendidos solamente sino también teniendo en cuenta el precio.
 
-```
+```js
 db.facturas.aggregate([
   { $unwind: "$item" },
   { $group: { _id: "$cliente.region", total_ingreso: { $sum: { $multiply: ["$item.cantidad", "$item.precio"] } } } },
@@ -37,10 +36,19 @@ db.facturas.aggregate([
 
 ### 3. Basado en la consulta del punto 1, mostrar sólo las regiones que tengan una cantidad de productos vendidos superior a 10000.
 Dado que no hay tantos productos, la query en realidad será mayor que 400.
+
+```js
+db.facturas.aggregate([
+  { $unwind: "$item" },
+  { $group: { _id: "$cliente.region", total_productos_vendidos: { $sum: "$item.cantidad" } } },
+  { $match: { total_productos_vendidos: { $gt: 400 } } },
+  { $project: { region: "$_id", total_productos_vendidos: 1, _id: 0 } }
+]);
+```
 ![alt text](img/query_03.png)
 
 ### 4. Se requiere obtener un reporte que contenga la siguiente información, nro. cuit, apellido y nombre y región y cantidad de facturas, ordenado por apellido.
-```
+```js
 db.facturas.aggregate([
   { $group: { 
       _id: { cuit: "$cliente.cuit", apellido: "$cliente.apellido", nombre: "$cliente.nombre", region: "$cliente.region" },
@@ -63,7 +71,7 @@ db.facturas.aggregate([
 
 ### 5. Basados en la consulta del punto 4 informar sólo los le clientes con número de CUIT mayor a 27000000000.
 A fines de que devuelva valores le quité un cero, ya que todos los del dataset son más chico, estimo yo que por un error, como si faltara el dígito verificador.
-```
+```js
 db.facturas.aggregate([
   { $group: { 
       _id: { cuit: "$cliente.cuit", apellido: "$cliente.apellido", nombre: "$cliente.nombre", region: "$cliente.region" },
@@ -87,7 +95,7 @@ db.facturas.aggregate([
 
 ### 6. Basados en la consulta del punto 5 informar solamente la cantidad de clientes que cumplen con esta condición.
 Similar al anterior, le tuve que quitar un cero. El resultado es consitente con el punto anterior.
-```
+```js
 db.facturas.aggregate([
   { $group: { 
       _id: { cuit: "$cliente.cuit", apellido: "$cliente.apellido", nombre: "$cliente.nombre", region: "$cliente.region" },
@@ -103,7 +111,7 @@ db.facturas.aggregate([
 
 
 ### 7. Se requiere realizar una consulta que devuelva la siguiente información: producto y cantidad de facturas en las que lo compraron, ordenado por cantidad de facturas descendente.
-```
+```js
 db.facturas.aggregate([
   { $unwind: "$item" },
   { $group: { _id: "$item.producto", cantidad_facturas: { $sum: 1 } } },
@@ -114,7 +122,7 @@ db.facturas.aggregate([
 ![alt text](img/query_07.png)
 
 ### 8. Obtener la cantidad total comprada así como también los ingresos totales para cada producto.
-```
+```js
 db.facturas.aggregate([
   { $unwind: "$item" },
   { 
@@ -137,7 +145,7 @@ db.facturas.aggregate([
 ![alt text](img/query_08.png)
 
 ### 9. Idem el punto anterior, ordenar por ingresos en forma ascendente, saltear el 1ro y mostrar 2do y 3ro.
-```
+```js
 db.facturas.aggregate([
   { $unwind: "$item" },
   { 
@@ -163,7 +171,7 @@ db.facturas.aggregate([
 ![alt text](img/query_09.png)
 
 ### 10. Obtener todos productos junto con un array de las personas que lo compraron. En este array deberá haber solo strings con el nombre completo de la persona. Los documentos entregados como resultado deberán tener la siguiente forma: {producto: “<nombre>”, personas:[“…”, …]}
-```
+```js
 db.facturas.aggregate([
   { $unwind: "$item" },
   { 
@@ -202,13 +210,12 @@ db.facturas.aggregate([
   },
   { $sort: { cantidad_diferentes_personas: -1 } }
 ]);
-```
+```js
 ![alt text](img/query_11.png)
 
 ### 12. Obtener el total gastado por persona y mostrar solo los que gastaron más de 3100000. Los documentos devueltos deben tener el nombre completo del cliente y el total gastado: {cliente:”<nombreCompleto>”,total:<num>}
 Acá también, tuve que modificar el tope. Puse 10.000 para que devuelva algo.
-
-```
+```js
 db.facturas.aggregate([
   { $unwind: "$item" },
   { 
@@ -230,7 +237,7 @@ db.facturas.aggregate([
 ![alt text](img/query_12.png)
 
 ### 13. Obtener el promedio de gasto por factura por cada región.
-```
+```js
 db.facturas.aggregate([
   { $unwind: "$item" },
   { 
@@ -252,7 +259,7 @@ db.facturas.aggregate([
 ![alt text](img/query_13.png)
 
 ### 14. Obtener la factura en la que se haya gastado más. En caso de que sean varias obtener la que tenga el número de factura menor.
-```
+```js
 db.facturas.aggregate([
   { $unwind: "$item" },
   { 
@@ -268,7 +275,7 @@ db.facturas.aggregate([
 ![alt text](img/query_14.png)
 
 ### 15. Obtener a los clientes indicando cuánto fue lo que más gastó en una única factura.
-```
+```js
 db.facturas.aggregate([
   { $unwind: "$item" },
   { 
@@ -289,7 +296,7 @@ db.facturas.aggregate([
 ![alt text](img/query_15.png)
 
 ### 16. Utilizando MapReduce, indicar la cantidad total comprada de cada ítem. Comparar el resultado con el ejercicio 8.
-```
+```js
 // Map function
 var mapFunction = function() {
   this.item.forEach(function(product) {
@@ -317,7 +324,7 @@ Como se puede observar, desde la consola de MongoDB Compass no puedo obtener el 
 
 ### 17. Obtener la información de los clientes que hayan gastado 100000 en una orden junto con el número de orden.
 Para que me devuelva valores tuve que ajustar el valor del filtro. En este caso puse 268.
-```
+```js
 db.facturas.aggregate([
   { $unwind: "$item" },
   { 
@@ -342,7 +349,7 @@ db.facturas.aggregate([
 
 ### 18. En base a la localidad de los clientes, obtener el total facturado por localidad.
 No existe el campo localidad. Lo hice por región para poder cumplir con el ejercicio.
-```
+```js
 db.facturas.aggregate([
   { $unwind: "$item" },
   { 
