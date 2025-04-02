@@ -15,9 +15,9 @@ Maestría en Inteligencia Artificial
 En este repo podrán ver la resolución a los diferentes trabajos prácticos de la materia.
 
 ## Trabajo Práctico Nº 1
-Referido a SQL.
+Referido a SQL. \
 [Ver resolución](TP1/chinook_solved.MD)
 
 ## Trabajo Práctico Nº 2
-Referido NoSQL. Mongo DB.
+Referido NoSQL. Mongo DB. \
 [Ver resolución](TP2/mongoDB_solved.MD)
