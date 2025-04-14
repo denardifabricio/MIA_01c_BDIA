@@ -21,3 +21,8 @@ Referido a SQL. \
 ## Trabajo Práctico Nº 2
 Referido NoSQL. Mongo DB. \
 [Ver resolución](TP2/mongoDB_solved.MD)
+
+
+## Trabajo Práctico Nº 3
+Referido a  base de datos orientados a grafos. Neo4j. \
+[Ver resolución](TP3/neo4j_solved.MD)
