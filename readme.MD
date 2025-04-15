@@ -26,3 +26,8 @@ Referido NoSQL. Mongo DB. \
 ## Trabajo Práctico Nº 3
 Referido a  base de datos orientados a grafos. Neo4j. \
 [Ver resolución](TP3/neo4j_solved.MD)
+
+
+## Trabajo Práctico Nº 4
+Referido a  base de datos vectoriales. chromadb. \
+[Ver resolución](TP4/chromadb.ipynb)
