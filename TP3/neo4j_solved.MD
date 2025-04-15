@@ -158,8 +158,9 @@ RETURN COUNT(n) AS totalNodos;
 ### 18. Contar los tipos de relaciones.
 Yo interpreté acá que cuenta por cada tipo de relación la cantidad de relaciones.
 ```js
-MATCH (n)
-RETURN COUNT(n) AS totalNodos;
+MATCH ()-[r]->()
+RETURN TYPE(r) AS tipoRelacion, COUNT(r) AS totalRelaciones
+ORDER BY totalRelaciones DESC;
 ```
 ![alt text](img/query_18.png)
 
