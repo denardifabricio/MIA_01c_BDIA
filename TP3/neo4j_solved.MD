@@ -17,7 +17,7 @@ A fines de mostrar el resultado más legible y que verdaderamente se pueda inter
 Por supuesto que habrá queries, como la primera que no se podrá ver el 100% de los datos, se imprimió para ver que el resultado tiene sentido y pude obtenerlo.
 
 ### 1. Obtener los nodos de todas las personas de la red.
-```js
+```sql
 MATCH (p:Persona)
 RETURN p;
 ```
@@ -25,7 +25,7 @@ RETURN p;
 
 
 ### 2.  Obtener el nombre y fecha de nacimiento de la persona de apellido Domínguez. 
-```js
+```sql
 MATCH (p:Persona {apellido: "Dominguez"})
 RETURN p.nombre, p.fechanac;
 ```
@@ -33,14 +33,14 @@ RETURN p.nombre, p.fechanac;
 
 
 ### 3.  Obtener la lista de empresas en las que trabajó Domínguez.
-```js
+```sql
 MATCH (p:Persona {apellido: "Dominguez"})-[:TRABAJO]->(e:Empresa)
 RETURN e.nombre AS empresa;
 ```
 ![alt text](img/query_03.png)
 
 ### 4.  Obtener la lista de personas que estudiaron carreras que no son de nivel “Universitario” y los nombres de las carreras. 
-```js
+```sql
 MATCH (p:Persona)-[:ESTUDIO]->(c:Carrera)
 WHERE c.nivel <> "Universitario"
 RETURN p.nombre AS persona, c.nombre AS carrera;
@@ -48,14 +48,14 @@ RETURN p.nombre AS persona, c.nombre AS carrera;
 ![alt text](img/query_04.png)
 
 ### 5.  Obtener los nodos etiquetados como Conocimiento.
-```js
+```sql
 MATCH (c:Conocimiento)
 RETURN c;
 ```
 ![alt text](img/query_05.png)
 
 ### 6.  Obtener los nodos de todas las personas con nombre terminado en a.
-```js
+```sql
 MATCH (p:Persona)
 WHERE p.nombre ENDS WITH "a"
 RETURN p;
@@ -63,14 +63,14 @@ RETURN p;
 ![alt text](img/query_06.png)
 
 ### 7.  Crear un nodo para la persona Analía Martinelli si no existe. 
-```js
+```sql
 MERGE (p:Persona {nombre: "Analía", apellido: "Martinelli"})
 RETURN p;
 ```
 ![alt text](img/query_07.png)
 
 ### 8.  Asociar un conocimiento "Cálculo" a Analía Martinelli si no lo posee. 
-```js
+```sql
 MERGE (c:Conocimiento {nombre: "Cálculo"})
 WITH c
 MATCH (p:Persona {nombre: "Analía", apellido: "Martinelli"})
@@ -80,7 +80,7 @@ RETURN p, c;
 ![alt text](img/query_08.png)
 
 ### 9.  Verificar si se creó duplicado del conocimiento "Cálculo".
-```js
+```sql
  MATCH (c:Conocimiento {nombre: "Cálculo"})
 RETURN COUNT(c) AS total;
 ```
@@ -88,7 +88,7 @@ RETURN COUNT(c) AS total;
 
 
 ### 10.  Crear una relación ESTUDIO para Analía Martinelli con la carrera "Lic en Sist de Inf", estado "En curso". 
-```js
+```sql
 MERGE (c:Conocimiento {nombre: "Cálculo"})
 WITH c
 MATCH (p:Persona {nombre: "Analía", apellido: "Martinelli"})
@@ -98,14 +98,14 @@ RETURN p, c;
 ![alt text](img/query_10.png)
 
 ### 11. Crear un nodo para Verónica Mendez
-```js
+```sql
 CREATE (p:Persona {nombre: "Verónica", apellido: "Mendez"})
 RETURN p;
 ```
 ![alt text](img/query_11.png)
 
 ### 12. Crear una relación CONOCE_A entre Analía y Verónica, asegurando que solo se cree una vez.
-```js
+```sql
 MATCH (a:Persona {nombre: "Analía", apellido: "Martinelli"})
 MATCH (v:Persona {nombre: "Verónica", apellido: "Mendez"})
 MERGE (a)-[:CONOCE_A]->(v)
@@ -114,7 +114,7 @@ RETURN a, v;
 ![alt text](img/query_12.png)
 
 ### 13. Actualizar o crear el nodo de Analía Martinelli con fecha de nacimiento 30/06/1968.
-```js
+```sql
 MATCH (a:Persona {nombre: "Analía", apellido: "Martinelli"})
 MATCH (v:Persona {nombre: "Verónica", apellido: "Mendez"})
 MERGE (a)-[:CONOCE_A]->(v)
@@ -123,7 +123,7 @@ RETURN a, v;
 ![alt text](img/query_13.png)
 
 ### 14. Agregarle la etiqueta "Empleado" y el país Argentina a Analía.
-```js
+```sql
 MATCH (a:Persona {nombre: "Analía", apellido: "Martinelli"})
 MATCH (v:Persona {nombre: "Verónica", apellido: "Mendez"})
 MERGE (a)-[:CONOCE_A]->(v)
@@ -132,7 +132,7 @@ RETURN a, v;
 ![alt text](img/query_14.png)
 
 ### 15. Eliminar la fecha de nacimiento y la etiqueta Persona de Analía.
-```js
+```sql
 MATCH (a:Persona {nombre: "Analía", apellido: "Martinelli"})
 REMOVE a:Persona
 REMOVE a.fechanac
@@ -142,14 +142,14 @@ RETURN a;
 
 ### 16. Eliminar el nodo de Analía y todas sus relaciones
 No devuelve nada porque ya borré a la sPersona.
-```js
+```sql
 MATCH (a:Persona {nombre: "Analía", apellido: "Martinelli"})
 DETACH DELETE a;
 ```
 ![alt text](img/query_16.png)
 
 ### 17. Contar los nodos en total. 
-```js
+```sql
 MATCH (n)
 RETURN COUNT(n) AS totalNodos;
 ```
@@ -157,7 +157,7 @@ RETURN COUNT(n) AS totalNodos;
 
 ### 18. Contar los tipos de relaciones.
 Yo interpreté acá que cuenta por cada tipo de relación la cantidad de relaciones.
-```js
+```sql
 MATCH ()-[r]->()
 RETURN TYPE(r) AS tipoRelacion, COUNT(r) AS totalRelaciones
 ORDER BY totalRelaciones DESC;
@@ -165,7 +165,7 @@ ORDER BY totalRelaciones DESC;
 ![alt text](img/query_18.png)
 
 ### 19. Listar todos los nodos y sus relaciones
-```js
+```sql
 MATCH (n)
 OPTIONAL MATCH (n)-[r]->(m)
 RETURN n, TYPE(r) AS relacion, m;
@@ -174,7 +174,7 @@ RETURN n, TYPE(r) AS relacion, m;
 
 
 ### 20. Obtener los nombres y rubros de las empresas registradas, reemplazando el rubro "Telefonía" por IT
-```js
+```sql
 MATCH (e:Empresa)
 RETURN e.nombre AS nombre, 
        CASE 
@@ -187,14 +187,14 @@ RETURN e.nombre AS nombre,
 ### 21. Determinar qué etiquetas tienen los nodos que son destino de la relación ESTUDIO.
 
 Aquí interpreté que se quería devolver nombre, título y nivel, que son las propiedades. Si yo buscaba labels, me traía solamente "Carrera", por eso modifiqué la query para que traiga los atributos mencionados.
-```js
+```sql
 MATCH ()-[:ESTUDIO]->(n)
 RETURN labels(n) AS etiquetas
 ORDER BY etiquetas DESC;
 ```
 
 Query modificada:
-```js
+```sql
 MATCH ()-[:ESTUDIO]->(n)
 RETURN DISTINCT keys(n) AS propiedades;
 ```
@@ -202,7 +202,7 @@ RETURN DISTINCT keys(n) AS propiedades;
 
 ### 22. Verificar las etiquetas de la carrera en la relación ESTUDIO
 Para mí es lo mismo que la anterior, entonces en este caso si muestro los labels y verificamos que es Carrera solamente 
-```js
+```sql
 MATCH ()-[:ESTUDIO]->(n)
 RETURN labels(n) AS etiquetas
 ORDER BY etiquetas DESC;
@@ -210,7 +210,7 @@ ORDER BY etiquetas DESC;
 ![alt text](img/query_22.png)
 
 ### 23. Usar UNWIND para transformar una colección en filas individuales. 
-```js
+```sql
 WITH ["Analía", "Verónica", "Gustavo", "Mariana"] AS nombres
 UNWIND nombres AS nombre
 RETURN nombre;
@@ -218,7 +218,7 @@ RETURN nombre;
 ![alt text](img/query_23.png)
 
 ### 24. Contar la cantidad de personas que estudiaron una carrera en cualquier estado. 
- ```js
+```sql
 MATCH (p:Persona)-[:ESTUDIO]->(:Carrera)
 RETURN COUNT(DISTINCT p) AS totalPersonas;
 ```
@@ -226,7 +226,7 @@ RETURN COUNT(DISTINCT p) AS totalPersonas;
 
 ### 25. Identificar si puede llegarse directa o indirectamente desde Mario López hasta Jorge Lupis mediante la relación CONOCE_A. 
 
- ```js
+```sql
 MATCH (m:Persona {nombre: "Mario", apellido: "López"}), (j:Persona {nombre: "Jorge", apellido: "Lupis"})
 MATCH path = (m)-[:CONOCE_A*]->(j)
 RETURN path LIMIT 1;
@@ -234,7 +234,7 @@ RETURN path LIMIT 1;
 ![alt text](img/query_25.png)
 
 ### 26. Obtener el camino más corto entre Gustavo y Mario en la relación CONOCE_A.  
- ```js
+```sql
 MATCH (g:Persona {nombre: "Gustavo"}), (m:Persona {nombre: "Mario"})
 MATCH path = shortestPath((g)-[:CONOCE_A*]-(m))
 RETURN path;
@@ -244,7 +244,7 @@ En este caso la imagen es la del path, aquí si se ve de forma interesante los n
 
 
 ### 27. Listar los caminos de relaciones de un camino determinado.
- ```js
+```sql
 MATCH path = (n1)-[*]->(n2)
 WHERE n1.nombre = "Gustavo" AND n2.nombre = "Mario"
 RETURN relationships(path) AS relaciones;
@@ -252,7 +252,7 @@ RETURN relationships(path) AS relaciones;
 ![alt text](img/query_27.png)
 
 ### 28. Verificar si una persona trabajó o trabajó en empresas que otro determinado profesional trabajo, para sugerir contactos. 
- ```js
+```sql
 MATCH (p1:Persona {nombre: "Gustavo"})-[:TRABAJO]->(e:Empresa)<-[:TRABAJO]-(p2:Persona)
 WHERE p1 <> p2
 RETURN DISTINCT p2.nombre AS posibleContacto, e.nombre AS empresa;
@@ -260,7 +260,7 @@ RETURN DISTINCT p2.nombre AS posibleContacto, e.nombre AS empresa;
 ![alt text](img/query_28.png)
 
 ### 29. Obtener los conocimientos más compartidos en cada carrera.
- ```js
+```sql
 MATCH (p:Persona)-[:ESTUDIO]->(c:Carrera), (p)-[:POSEE]->(k:Conocimiento)
 WITH c.nombre AS carrera, k.nombre AS conocimiento, COUNT(p) AS total
 ORDER BY total DESC
@@ -270,7 +270,7 @@ RETURN carrera, masCompartido.conocimiento AS conocimiento, masCompartido.total 
 ![alt text](img/query_29.png)
 
 ### 30. Ranking de los primeros 2 conocimientos de la carrera "Ing en Sistemas de Información".
- ```js
+```sql
 MATCH (p:Persona)-[:ESTUDIO]->(c:Carrera {nombre: "Ing en Sistemas de Información"}), (p)-[:POSEE]->(k:Conocimiento)
 WITH k.nombre AS conocimiento, COUNT(p) AS total
 ORDER BY total DESC
