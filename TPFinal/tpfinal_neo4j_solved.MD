@@ -65,6 +65,8 @@ ORDER BY totalFraudAmount DESC
 ```
 ![alt text](img/query_01.png)
 
+Nota Ejercicio 1: Esta query es la que más tiempo me llevo, no por la complejidad sino porque tuve que investigar los labels, properties, nodes, etc. Es decir el modelo de datos.
+
 
 ## 2. Clientes con información PII compartida 
 Encuentra los clientes que comparten información PII (Mail, teléfono o SSN) con más de una persona. Deberás contar cuántas personas comparten información con cada cliente y ordenar de forma descendente. 
@@ -78,11 +80,14 @@ Identifica al cliente que ha movido más dinero de manera fraudulenta, ordenado 
 ```sql
 MATCH (c:Client)-[:PERFORMED]->(t:Transaction {fraud: true})
 WITH c, COUNT(t) AS numFraudulentTransactions, SUM(t.amount) AS totalFraudAmount
-RETURN c.id AS ClientID, numFraudulentTransactions AS FraudulentTransactions, totalFraudAmount AS TotalFraudAmount
+RETURN c.id AS ClientID, c.name, numFraudulentTransactions AS FraudulentTransactions, totalFraudAmount AS TotalFraudAmount
 ORDER BY numFraudulentTransactions DESC, totalFraudAmount DESC
 LIMIT 1
 ```
 ![alt text](img/query_03.png)
+
+Nota ejercicio 3: Vemos que hay un Limit 1, fui jugando con diferentes valores,  lo que quería asegurarme era el orden correcto y que traiga el más grande. Sobre todo cuando coincidía el primer filtro.
+![alt text](img/query_03_1.png)
 
 ## 4. Banco con más transacciones 
 Determina cuál es el banco que ha tenido el mayor número de transacciones. 
@@ -95,6 +100,8 @@ LIMIT 1
 ```
 ![alt text](img/query_04.png)
 
+Nota ejercicio 4: Vemos que hay un Limit 1, fui jugando con diferentes valores, no agrego imagen ya que no aporta valor, lo que quería asegurarme era el orden correcto y que traiga el más grande.
+
 ## 5. Transferencias fraudulentas a bancos 
 Descubre si existen transferencias fraudulentas directas hacia algún banco y cuántas han sido. 
 ```sql
@@ -105,6 +112,14 @@ ORDER BY FraudulentTransfers DESC
 ![alt text](img/query_05.png)
 
 Vemos que no hay transacciones fraudlentas directas hacia bancos.
+
+Nota Ejericio 5: Para chequearlo hice la inversa, fraud:false y si me devolvió resultados, como para verificar el correcto funcionameinto de la query. 
+Vemos entonces que todos las transacciones directas de banco no son fraudulentas: <br/><br/>
+Totales por destino sin discrminiar si son o no fraudelentas:
+![alt text](img/query_05_1.png)
+
+Total a bancos no fraudentas:
+![alt text](img/query_05_2.png)
 
 ## 6. Camino más corto entre cliente y banco 
 Determina cuál es el camino más corto que relaciona al cliente identificado en el ejercicio 3 con el banco determinado en el ejercicio 4. 
@@ -134,3 +149,4 @@ RETURN p
 
  ![alt text](img/query_06_1.png)
 
+Nota Ejercicio 6: La parte que tuve que investigar y valerme de ayudas de LLM fue la de Call, para poder hacerlo dinámico. Porque no quería hardcodear el ClientID ni el BankId.
