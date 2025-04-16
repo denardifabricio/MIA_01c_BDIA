@@ -35,5 +35,5 @@ Referido a  base de datos vectoriales. chromadb. \
 
 # Trabajo Práctico Final
 Finalmente, desarrollé el TP final propuesto por la cátedra. \
-Se nos propuso a los alumnos elegir entre los tipos diferentes de base de datos vistos. Yo elegí el orientado a grafos, pues me pareció el más interesado y distinto a lo que yo estaba acostumbrado a ver en mi carrera profesional.
+Se nos propuso a los alumnos elegir entre los tipos diferentes de base de datos vistos. 
 [Ver resolución](TPFinal/tpfinal_neo4j_solved.MD)

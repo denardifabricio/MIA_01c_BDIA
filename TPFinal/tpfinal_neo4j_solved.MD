@@ -2,10 +2,13 @@
 
 # Trabajo Práctico Final
 Finalmente, desarrollé el TP final propuesto por la cátedra. \
-Se nos propuso a los alumnos elegir entre los tipos diferentes de base de datos vistos. Yo elegí el orientado a grafos, pues me pareció el más interesado y distinto a lo que yo estaba acostumbrado a ver en mi carrera profesional.
+Se nos propuso a los alumnos elegir entre los tipos diferentes de base de datos vistos. 
 
 # Consigna
 Ver [Grafos.pdf](Grafos.pdf) con la propuesta.
+
+# Motivación
+Elegí el orientado a grafos, pues me pareció el más interesante y distinto a lo que yo estaba acostumbrado a ver en mi carrera profesional. El de SQL no me aportaba valor y el de nodejs es algo que muy facilmente con tutoriales se puede aprender o implementar profesionalmente sin mayores sobresaltos, en cambio el de grafo lo veo más orientados a problemas de ML, de hecho este tp es una aproximación a un problema real.
 
 # Prerequisitos y comentarios previos
 
@@ -42,13 +45,14 @@ ORDER BY freq DESC
 
 Nota: He detectado que hay diferencia entre la cantidad de registros que el proceso local me creó respecto a lo que la imagen del sitio se ve. En este caso asumí que no fue un error del proceso sino que se trata de ejemplos que van variando en el tiempo. Puesto que las queries de ejemplo siguen el mismo orden y guardan simulitud, por ejemplo hay muchas mas transacciones que notas de créditos. 
 
-También hice otra query muy sencilla para ver en formato nodo si respetaba el grafo teórico, cosa que sí lo hizo:
+También hice otra query muy sencilla para ver en formato nodo si respetaba el grafo teórico, cosa que sí lo hizo. La siguiente imagen muestra un fragmento del resultado obtenido:
 ```sql
 MATCH (n)-[r]->(m)
 RETURN n, r, m
 LIMIT 100
 ```
 ![alt text](img/query_00_1.png)
+<br/> Se puede observar que los nodos y las relaciones siguen la del gráfico teórico.
 
 # Resolución
 A continuación se mostrará la resolución para cada consulta solicitada en la consigna. Basicamente es realizar ejercicios sobre un simulador de transacciones financieras.
@@ -71,9 +75,37 @@ Nota Ejercicio 1: Esta query es la que más tiempo me llevo, no por la complejid
 ## 2. Clientes con información PII compartida 
 Encuentra los clientes que comparten información PII (Mail, teléfono o SSN) con más de una persona. Deberás contar cuántas personas comparten información con cada cliente y ordenar de forma descendente. 
 ```sql
+MATCH (c1:Client)
+OPTIONAL MATCH (c1)-[:HAS_EMAIL]->(e:Email)<-[:HAS_EMAIL]-(c2:Client)
+WHERE c1.id <> c2.id
+WITH c1, COLLECT(DISTINCT c2.name) AS sharedEmailClients
 
+OPTIONAL MATCH (c1)-[:HAS_PHONE]->(p:Phone)<-[:HAS_PHONE]-(c3:Client)
+WHERE c1.id <> c3.id
+WITH c1, sharedEmailClients, COLLECT(DISTINCT c3.name) AS sharedPhoneClients
+
+OPTIONAL MATCH (c1)-[:HAS_SSN]->(s:SSN)<-[:HAS_SSN]-(c4:Client)
+WHERE c1.id <> c4.id
+WITH c1, 
+     sharedEmailClients + sharedPhoneClients AS combinedClients, 
+     COLLECT(DISTINCT c4.name) AS sharedSSNClients
+
+WITH c1, combinedClients + sharedSSNClients AS allSharedClients
+
+WITH c1, apoc.coll.toSet(allSharedClients) AS uniqueSharedClients
+WHERE SIZE(uniqueSharedClients) > 1
+RETURN c1.id AS ClientID, c1.name,  SIZE(uniqueSharedClients) AS SharedPIICount, uniqueSharedClients AS SharedWith
+ORDER BY SharedPIICount DESC
 ```
 ![alt text](img/query_02.png)
+
+Nota Ejericio 2: Junto con el ejericio 6, esta query me llevó a investigar más, buscando docu y ayudándome de LLMs para su resolución.
+Links de referencia: <br/>
+https://neo4j.com/docs/cypher-manual/current/clauses/optional-match/ <br/>
+https://neo4j.com/docs/cypher-manual/current/clauses/with/ <br/>
+https://neo4j.com/docs/cypher-manual/current/functions/scalar/#functions-size
+
+
 
 ## 3. Cliente con mayor actividad fraudulenta 
 Identifica al cliente que ha movido más dinero de manera fraudulenta, ordenado por número de transacciones y monto total en forma descendente. 
@@ -115,10 +147,10 @@ Vemos que no hay transacciones fraudlentas directas hacia bancos.
 
 Nota Ejericio 5: Para chequearlo hice la inversa, fraud:false y si me devolvió resultados, como para verificar el correcto funcionameinto de la query. 
 Vemos entonces que todos las transacciones directas de banco no son fraudulentas: <br/><br/>
-Totales por destino sin discrminiar si son o no fraudelentas:
+Totales por destino sin discrminiar si son o no fraudelentas: <br/>
 ![alt text](img/query_05_1.png)
-
-Total a bancos no fraudentas:
+<br/>VS<br/>
+Total a bancos no fraudentas:<br/>
 ![alt text](img/query_05_2.png)
 
 ## 6. Camino más corto entre cliente y banco 
@@ -150,3 +182,4 @@ RETURN p
  ![alt text](img/query_06_1.png)
 
 Nota Ejercicio 6: La parte que tuve que investigar y valerme de ayudas de LLM fue la de Call, para poder hacerlo dinámico. Porque no quería hardcodear el ClientID ni el BankId.
+
